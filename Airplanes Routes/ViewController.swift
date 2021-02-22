@@ -52,12 +52,12 @@ class ViewController: UIViewController, UITextFieldDelegate {
         var element = ""
         var final = ""
         
-        for item in elementArr {
-            let index = elementArr.firstIndex(where: {$0 == item}) ?? 0
-            if (First.count == 0) {
-                First = item
-            }
-            if (index == (elementArr.count - 1)) {
+        for i in 0..<elementArr.count {
+            //let index = elementArr.firstIndex(where: {$0 == item}) ?? 0
+            
+            let item = elementArr[i]
+            
+            if (i == (elementArr.count - 1)) {
                 Last = item
             }
             
@@ -83,11 +83,11 @@ class ViewController: UIViewController, UITextFieldDelegate {
                 isLastUnique = true
             }
             
-            if (index % 2 == 0) {
+            if (i % 2 == 0) {
                 element = String(format: "(\"%@\",", item)
-            } else if (index == 0) {
+            } else if (i == 0) {
                 element = String(format: "(\"%@\",", item)
-            } else if (index % 2 != 0) {
+            } else if (i % 2 != 0) {
                 element = String(format: " \"%@\")", item)
             }
             
@@ -110,9 +110,9 @@ class ViewController: UIViewController, UITextFieldDelegate {
         
         outputArr = []
         
-        self.lblDetails.text = "[\(final)]"
-        
-        if !(isFirstUnique && isLastUnique) {
+        if (isFirstUnique && isLastUnique) {
+            self.lblDetails.text = "[\(final)]"
+        } else {
             self.alertWithText(alertTxt: "Output is not in correct format, origin & destination should be unique.", title: "Error", alertBtnTitle: "OK", parentVC: self)
         }
     }
@@ -193,6 +193,23 @@ extension ViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     }
 
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        activeTextField.text = inputArr[row]
+        if (activeTextField == txtOrigin) {
+            let firstCount = elementArr.filter{$0 == inputArr[row]}.count
+            if (First.count > 0) {
+                if ((firstCount == 1) && (First == inputArr[row])) {
+                    self.alertWithText(alertTxt: "First origin should be unique.", title: "Error", alertBtnTitle: "OK", parentVC: self)
+                } else {
+                    activeTextField.text = inputArr[row]
+                }
+            } else {
+                activeTextField.text = inputArr[row]
+            }
+        } else {
+            activeTextField.text = inputArr[row]
+        }
+        
+        if (First.count == 0) {
+            First = inputArr[row]
+        }
     }
 }
